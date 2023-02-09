@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1e40340b60853144988f0a850cb0ff0, type: 3}
+  m_Name: Koishi
+  m_EditorClassIdentifier: 
+  images:
+  - sprites:
+    - {fileID: 21300000, guid: 97fe48c018ebba447835a3019acd90ee, type: 3}
+    - {fileID: 21300000, guid: 17ec657c4563bc94da8871c04387daf0, type: 3}
+    - {fileID: 21300000, guid: ef376d8ceafb48f45818fcff07fa7ff3, type: 3}
+    - {fileID: 21300000, guid: 1d4589ea7e149b9418080ddc68f92448, type: 3}
+  - sprites:
+    - {fileID: 21300000, guid: 07c795df495178843badff625a20f34e, type: 3}
+    - {fileID: 21300000, guid: 4ae7e823098c5cb4db9926cb9eaeaa08, type: 3}
+    - {fileID: 21300000, guid: 95e22817bb15ad64caa38aba8cd2e862, type: 3}
+  names:
+  - Marisa
+  - Koishi
+  sentences:
+  - index: 0
+    imageIndex: 0
+    content: "\u54E6\uFF0C\u662F\u604B\u604B\u554A\uFF01\u4ECA\u5929\u600E\u4E48\u6CA1\u6709\u5230\u5730\u4E0A\u73A9\u5440"
+  - index: 1
+    imageIndex: 1
+    content: "\u4E0D\u662F\u6709\u5730\u4E0A\u4EBA\u627E\u4E0A\u95E8\u6765\u4E86\u5417\uFF01\\n\u604B\u604B\u5F88\u5F00\u5FC3\u54E6"
+  - index: 0
+    imageIndex: 0
+    content: "\u5B9E\u9645\u4E0A\uFF0C\u6211\u662F\u60F3\u6765\u627E\u4F60\u59D0\u59D0\u501F\u70B9\u4E1C\u897F\u6765\u7740\u2026"
+  - index: 1
+    imageIndex: 1
+    content: "\u7136\u540E\u7B49\u4F60\u6B7B\u4E86\u518D\u8FD8\u56DE\u6765\u5BF9\u5427~"
+  - index: 1
+    imageIndex: 2
+    content: "\u5148\u522B\u7BA1\u8FD9\u4E9B\u4E86\uFF0C\u5FEB\u6765\u5F39\u5E55\u5BF9\u6218\u5427\uFF01\\n\u4E0D\u7136\u604B\u604B\u53EF\u4E0D\u4F1A\u8BA9\u4F60\u8D70\u54E6"
+  - index: 0
+    imageIndex: 1
+    content: "\u771F\u62FF\u4F60\u6CA1\u529E\u6CD5\u2026\u2026"
+  - index: 0
+    imageIndex: 3
+    content: "\u90A3\u5C31\u6765\u8BD5\u8BD5\u516B\u5366\u7089\u7684\u706B\u529B\u5427DA\u2606ZE"

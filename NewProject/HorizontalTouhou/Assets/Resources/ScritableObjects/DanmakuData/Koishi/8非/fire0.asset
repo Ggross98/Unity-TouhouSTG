@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae963a5af7d483e4ba163b9988eba352, type: 3}
+  m_Name: fire0
+  m_EditorClassIdentifier: 
+  startDir: {x: 1, y: 0, z: 0}
+  aimed: 1
+  startAngle: 0
+  startDistance: 1
+  count: 8
+  posDir: {x: 1, y: -1, z: 0}
+  posStartDistance: 0
+  shotOperationDelay: 0
+  type: 1
+  group:
+    num: 1
+    interval: 0.03
+    deltaDistance: 0
+    deltaAngle: 0
+    posDeltaAngle: 0
+    posDeltaDistance: 0

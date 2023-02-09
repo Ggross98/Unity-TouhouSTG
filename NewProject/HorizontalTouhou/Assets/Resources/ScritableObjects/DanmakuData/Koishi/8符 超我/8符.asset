@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60c59eb36c194674495dfb128ec9f399, type: 3}
+  m_Name: "8\u7B26"
+  m_EditorClassIdentifier: 
+  danmakuName: "\u6291\u5236\u300C\u8D85\u6211\u300D"
+  data:
+  - {fileID: 11400000, guid: dd4b6e440a43de747ada81ee361dd927, type: 2}
+  - {fileID: 11400000, guid: bd43a196f5ebab44c9e8b12fc7e701e1, type: 2}
+  type: 0
+  animation: 0
+  move:
+    type: 0
+    startPosition: {x: 0, y: 0, z: 0}
+    startDelay: 1
+    minX: -2
+    maxX: 0.5
+    minY: -2
+    maxY: 2
+    interval: 2
+    delay: 0
+    duration: 1
+  hp: 350
+  survivalTime: 0

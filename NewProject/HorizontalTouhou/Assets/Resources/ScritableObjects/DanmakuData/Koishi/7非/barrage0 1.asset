@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed763e801d03dca48b42bb347ee1c337, type: 3}
+  m_Name: barrage0 1
+  m_EditorClassIdentifier: 
+  shotData: {fileID: 11400000, guid: 78f37c083a2778d44a9b9b5698dc0743, type: 2}
+  startDelay: 0
+  interval: 0.3
+  fireData: {fileID: 11400000, guid: 68f3c423a470b9b42bc11c9d75ec5004, type: 2}
+  fireOffset:
+    cycle: 20
+    startCycleIndex: 0
+    range: 360
+    type: 1
+    reciprocate: 0

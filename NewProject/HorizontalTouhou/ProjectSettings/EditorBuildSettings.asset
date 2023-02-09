@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 6facf010a34dc7d47a6a1e638b2a8fca
+  - enabled: 1
+    path: Assets/Scenes/StageSelect.unity
+    guid: 0615e2a62f7caab4a844d5b1cb1f3f54
+  - enabled: 0
+    path: Assets/Scenes/OldStages/Help.unity
+    guid: 2c7ec7af5f0bb1943af7d0db67571f33
+  - enabled: 1
+    path: Assets/Scenes/Config.unity
+    guid: c0685751bd9359e49be38c9ac6276b6c
+  - enabled: 0
+    path: Assets/Scenes/OldStages/Stage_Koishi.unity
+    guid: 78e7f1d648c3ae54fb8c2eb58d416dd3
+  - enabled: 0
+    path: Assets/Scenes/OldStages/Stage_Sukuna.unity
+    guid: 467cdaedafe649344802c87a84856005
+  - enabled: 1
+    path: Assets/Scenes/Koishi.unity
+    guid: 1626ab391435bdc48aab426ad575dc24
+  - enabled: 0
+    path: Assets/Scenes/OldStages/Stage_Yiji.unity
+    guid: b5d13fb7c17490947b09cfd825bd83df
+  m_configObjects: {}
