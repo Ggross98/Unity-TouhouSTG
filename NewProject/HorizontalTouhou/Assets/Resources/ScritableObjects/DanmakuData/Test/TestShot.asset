@@ -13,8 +13,16 @@ MonoBehaviour:
   m_Name: TestShot
   m_EditorClassIdentifier: 
   prefabIndex: 13
-  baseSpeed: 5.5
+  lifetime: 0
+  speed:
+    value: 8
+    min: 8
+    max: 8
+  deltaSpeed: 0
+  angle:
+    value: 0
+    min: 0
+    max: 0
+  deltaAngle: 0
   moveMode: 0
   wallCheckMode: 0
-  deltaSpeed: -0.6
-  deltaAngle: 0

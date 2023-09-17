@@ -23,12 +23,11 @@ MonoBehaviour:
     type: 0
     startPosition: {x: 3, y: 0, z: 0}
     startDelay: 1
-    minX: -2
-    maxX: 0.5
-    minY: -2
-    maxY: 2
-    interval: 2
+    minX: -1
+    maxX: 1
+    minY: -1
+    maxY: 1
+    interval: 3
     delay: 0
-    duration: 1
-  hp: 300
-  survivalTime: 0
+    duration: 2
+  hp: 550

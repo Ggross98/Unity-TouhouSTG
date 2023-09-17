@@ -9,6 +9,10 @@ public class MainMenu : MonoBehaviour {
     [SerializeField] private GameObject[] buttons;
     [SerializeField] private AudioClip bgm;
 
+    private void Awake() {
+        Screen.SetResolution(1920, 1080, false);
+    }
+
 
     private void Start() {
         BGMManager.Instance.SetClips(new AudioClip[]{bgm});

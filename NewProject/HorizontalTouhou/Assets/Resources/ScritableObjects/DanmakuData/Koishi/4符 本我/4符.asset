@@ -29,5 +29,4 @@ MonoBehaviour:
     interval: 2
     delay: 0
     duration: 1
-  hp: 350
-  survivalTime: 0
+  hp: 500

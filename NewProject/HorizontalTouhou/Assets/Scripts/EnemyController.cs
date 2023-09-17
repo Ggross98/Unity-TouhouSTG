@@ -41,16 +41,17 @@ public class EnemyController : CharacterController
     #endregion
 
     public int spellLife, spellMaxLife;
-    float spellTime, spellMaxTime;
+    // float spellTime, spellMaxTime;
 
     #region 弹幕间移动
-    float spellInterval = 1.5f;
+    [SerializeField] float spellInterval = 1.5f;
     #endregion
 
     private bool spelling = false;
     // private bool interactive = false;
 
     [SerializeField] private Transform magicCircle;
+    [SerializeField] private ShotEraser shotEraser;
 
     private void Awake()
     {
@@ -118,38 +119,55 @@ public class EnemyController : CharacterController
 
                     moveTimer = move.interval;
                 }
+            }
 
 
-
-
+            // 时符：按时间掉血
+            if (danmaku.type == DanmakuType.SurvivalCard)
+            {
+                spellLife -= 1;
+            }
+            else{
+                if(hitByBomb){
+                    spellLife -= 1;
+                }
             }
 
             // 符卡结束判定
-            if (danmaku.type == DanmakuType.SurvivalCard)
+            if (spellLife == 0)
             {
-
+                EndDanmaku();
             }
-            else
-            {
-                if (spellLife == 0)
-                {
-                    EndDanmaku();
-                }
-            }
+            
 
         }
 
 
     }
 
+
     public override void StartBattle()
     {
-        danmakuIndex = 0;
-        StartDanmaku();
 
-        SetInteractive(true);
+        animator.SetTrigger("Intro");
+
+        StartCoroutine(WaitForSeconds(1f, ()=>{
+
+            SetInteractive(true);
+            
+            danmakuIndex = 0;
+            StartDanmaku();
+
+            
+        }));
+
+        
     }
 
+    [SerializeField] private float startDanmakuMoveDelay = 0.1f;
+    [SerializeField] private float startDanmakuMoveDuration = 1f;
+    [SerializeField] private float hpRingFillDuration = 0.5f;
+    [SerializeField] private float startDanmakuIdleDuration = 0.1f;
 
     private void StartDanmaku()
     {
@@ -160,7 +178,13 @@ public class EnemyController : CharacterController
         moveTimer = move.startDelay;
 
         // 移动至初始位置
-        MoveTo(move.startPosition, 1f, 1f);
+        var distance = (transform.position - move.startPosition).magnitude;
+        
+        var waitTime = startDanmakuMoveDelay;
+        if(distance > 0.5f){
+            MoveTo(move.startPosition, startDanmakuMoveDuration, startDanmakuMoveDelay);
+            waitTime = startDanmakuMoveDuration + startDanmakuMoveDelay;
+        }
 
         // 符卡展开音效
         SFXManager.Instance.CreateSFX(4);
@@ -171,30 +195,33 @@ public class EnemyController : CharacterController
         // Debug.Log(danmaku.data);
 
         // 弹幕类型和生命值
+        spellMaxLife = danmaku.hp;
+        spellLife = spellMaxLife;
         switch (danmaku.type)
         {
             case DanmakuType.SpellCard:                 // 符卡
-                spellMaxLife = danmaku.hp;
-                spellLife = spellMaxLife;
+                
                 StartCoroutine(ShowMagicCircle(1f, 2f));
                 animator.SetTrigger("SpellCard");
                 break;
+
             case DanmakuType.NonSpellCard:              // 非符
-                spellMaxLife = danmaku.hp;
-                spellLife = spellMaxLife;
+                // spellMaxLife = danmaku.hp;
+                // spellLife = spellMaxLife;
                 break;
+
             case DanmakuType.SurvivalCard:              // 时符
-                spellMaxTime = danmaku.survivalTime;
-                spellTime = spellMaxTime;
+                // spellMaxTime = danmaku.survivalTime;
+                // spellTime = spellMaxTime;
+                // spellMaxLife = danmaku.hp;
+                // spellLife = spellMaxLife;
                 StartCoroutine(ShowMagicCircle(1f, 2f));
                 animator.SetTrigger("SpellCard");
                 break;
         }
 
         // 装填弹幕
-
         barrages = new List<Barrage>();
-
 
         for (int i = 0; i < barrageData.Count; i++)
         {
@@ -209,28 +236,32 @@ public class EnemyController : CharacterController
             barrage.counter = 0;
         }
 
-        // 显示符卡生命
-        // hpRing.Show();
-        // hpRing.Fill();
-        GameUI.Instance.ShowHPRing();
-        GameUI.Instance.FillHPRing();
-
         // 显示符卡名
         GameUI.Instance.ShowSpellName(danmaku.danmakuName);
 
-        StartCoroutine(WaitForSeconds(1f, () =>
+        StartCoroutine(WaitForSeconds(waitTime + startDanmakuIdleDuration, () =>
         {
+            // 显示符卡生命值
+            var ringColor = danmaku.type == DanmakuType.SurvivalCard ? 1 : 0;
+            GameUI.Instance.FillHPRing(hpRingFillDuration, ringColor);
+        }));
+
+        StartCoroutine(WaitForSeconds(waitTime + startDanmakuIdleDuration + hpRingFillDuration, () => {
             spelling = true;
         }));
 
-
-
+        GameMain.Instance.StartDanmaku();
     }
+
+
+
+
     private void EndDanmaku()
     {
+        GameMain.Instance.EndDanmaku(danmakuList[danmakuIndex].type == DanmakuType.SpellCard);
 
-
-        // TODO: 清除弹幕
+        // 清除弹幕
+        shotEraser.EraseScreen(transform.position);
 
         // 刷新弹幕发射器
         foreach (var barrage in barrages)
@@ -242,10 +273,8 @@ public class EnemyController : CharacterController
         spelling = false;
 
 
-
+        // 动画显示
         GameUI.Instance.HideHPRing();
-
-        // hpRing.Hide();
         StartCoroutine(BreakMagicCircle());
 
         danmakuIndex++;
@@ -277,6 +306,8 @@ public class EnemyController : CharacterController
             }));
 
         }
+
+        
     }
 
     private void InvokeBarrage(Barrage barrage, BarrageData barrageData)
@@ -327,10 +358,10 @@ public class EnemyController : CharacterController
             case FireType.Sector:
                 StartCoroutine(FireSector(barrage, fireData, deltaStartAngle));
                 break;
-                // case FireType.Turbine:
-                //     // var ftd = (FireTurbineData)fireData;
-                //     StartCoroutine(FireTurbine(barrage, fireData));
-                //     break;
+            case FireType.Spray:
+                StartCoroutine(FireSpray(barrage, fireData, deltaStartAngle));
+                break;
+
         }
 
 
@@ -365,12 +396,9 @@ public class EnemyController : CharacterController
 
         Sequence seq = DOTween.Sequence();
         seq.Insert(startDelay, tween);
+        seq.Append(transform.DOMove(target, duration));
 
         seq.Play();
-
-
-
-        seq.Append(transform.DOMove(target, duration));
 
     }
 
@@ -407,6 +435,108 @@ public class EnemyController : CharacterController
         yield return null;
     }
 
+    public void Hit()
+    {
+        if (danmakuList[danmakuIndex].type == DanmakuType.SurvivalCard) return;
+
+        // 击中音效
+        SFXManager.Instance.CreateSFX(0, 0.1f);
+
+        spellLife -= 1;
+        if (spellLife < 0) spellLife = 0;
+    }
+
+    private bool hitByBomb = false;
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+
+        // 判定被玩家的弹幕击中
+        var shot = other.GetComponent<Shot>();
+
+        if (shot != null && !shot.enemyShot)
+        {
+            if (spelling)
+            {
+                shot.TouchCharacter();
+                Hit();
+            }
+
+        }
+
+        // 判定被玩家的Bomb击中
+        // var eraser = other.GetComponent<ShotEraser>();
+        // if(eraser != null && eraser.erasing && eraser.playerBomb){
+        //     // Hit();
+        //     hitByBomb = true;
+        // }
+    }
+
+    private void OnTriggerStay2D(Collider2D other){
+
+        // 判定被玩家的Bomb击中
+        var eraser = other.GetComponent<ShotEraser>();
+        if(eraser != null && eraser.erasing && eraser.playerBomb){
+            Hit();
+        }
+    }
+
+    // private void OnTriggerExit2D(Collider2D other){
+
+    //     // 判定被玩家的Bomb击中
+    //     var eraser = other.GetComponent<ShotEraser>();
+    //     if(eraser != null && eraser.playerBomb){
+    //         hitByBomb = false;
+    //     }
+    // }
+
+
+    public void StartDelayOperation(List<DelayOperation> operations, List<Shot> shots){
+        foreach(var operation in operations){
+            StartCoroutine(WaitForSeconds(operation.delay, ()=>{
+                InvokeShotOperation(operation, shots);
+            }));
+        }
+    }
+
+    private void InvokeShotOperation(DelayOperation operation, List<Shot> shots){
+
+        foreach(var shot in shots){
+            if(shot == null || !shot.isActiveAndEnabled) continue;
+
+            switch(operation.type){
+                case ShotOperationType.ChangeDirectionAndSpeed:
+                    // 方向
+                    switch(operation.directionType){
+                        case DirectionType.Fixed:
+                            shot.startDirection = operation.direction;
+                            break;
+                        case DirectionType.Aimed:
+                            shot.startDirection = (player.transform.position - shot.transform.position).normalized;
+                            break;
+                        case DirectionType.Random:
+                            shot.startDirection = Utils.GetRandomDirection();
+                            break;
+                    }
+
+                    // 速度
+                    shot.SetSpeed(operation.speed, operation.deltaSpeed);
+
+                    // 角度
+                    shot.SetAngle(operation.angle, operation.deltaAngle);
+
+                    break;
+            }
+        }
+        
+    }
+
+
+    // *********************************************************************************************
+
+    #region 弹幕实现
+
+
+    
     private IEnumerator FireRound(Barrage barrage, FireData data, float deltaStartAngle)
     {
         var group = data.group;
@@ -466,10 +596,13 @@ public class EnemyController : CharacterController
         barrage.firing = false;
 
 
-        if (data.shotOperationDelay > 0 && data.shotOperation != null)
-        {
-            yield return new WaitForSeconds(data.shotOperationDelay);
-            data.shotOperation(shotList);
+        // if (data.shotOperationDelay > 0 && data.shotOperation != null)
+        // {
+        //     yield return new WaitForSeconds(data.shotOperationDelay);
+        //     data.shotOperation(shotList);
+        // }
+        if(data.delayOperations.Count > 0){
+            StartDelayOperation(data.delayOperations, shotList);
         }
 
         yield return null;
@@ -490,7 +623,7 @@ public class EnemyController : CharacterController
         var angle = data.startAngle + deltaStartAngle;
         var dist = data.startDistance;
         var count = data.count;
-        var sectorAngle = data.sectorDeltaAngle;
+        var sectorAngle = data.sector.deltaAngle;
         // var startDir = data.aimed ? player.transform.position - transform.position : data.startDir;
 
         // 发射点位置
@@ -535,10 +668,83 @@ public class EnemyController : CharacterController
         barrage.firing = false;
 
 
-        if (data.shotOperationDelay > 0 && data.shotOperation != null)
+        // if (data.shotOperationDelay > 0 && data.shotOperation != null)
+        // {
+        //     yield return new WaitForSeconds(data.shotOperationDelay);
+        //     data.shotOperation(shotList);
+        // }
+        if(data.delayOperations.Count > 0){
+            StartDelayOperation(data.delayOperations, shotList);
+        }
+
+        yield return null;
+    }
+
+    private IEnumerator FireSpray(Barrage barrage, FireData data, float deltaStartAngle){
+        var group = data.group;
+
+        // 组内射击间隔计时
+        float interval = group.interval;
+        float timer = interval;
+
+        var shotList = new List<Shot>();
+
+        // 子弹方向和速度
+        var angle = data.startAngle + deltaStartAngle;
+        var dist = data.startDistance;
+        var count = data.count;
+        Vector3 startDir = Vector3.zero;
+        switch (data.directionType)
         {
-            yield return new WaitForSeconds(data.shotOperationDelay);
-            data.shotOperation(shotList);
+            case DirectionType.Fixed:
+                startDir = data.startDir;
+                break;
+            case DirectionType.Aimed:
+                startDir = player.transform.position - transform.position;
+                break;
+            case DirectionType.Random:
+                startDir = Utils.GetRandomDirection();
+                break;
+
+        }
+        startDir = startDir.normalized;
+        // var startDir = data.aimed ? player.transform.position - transform.position : data.startDir;
+
+        // 发射点位置
+        var posDir = data.posDir.normalized;
+        var posDistance = data.posStartDistance;
+
+        for (int i = 0; i < group.num; i++)
+        {
+
+            while (timer < interval)
+            {
+                timer += Time.deltaTime;
+                yield return new WaitForFixedUpdate();
+            }
+
+            var deltaPos = posDir * posDistance;
+
+            shotList.AddRange(barrage.FireSpray(startDir, angle, data.spray.fire, data.spray.angle, dist, deltaPos));
+            timer = 0;
+
+            // 组内改变的参数
+            angle += group.deltaAngle;
+            dist += group.deltaDistance;
+            posDir = Quaternion.AngleAxis(group.posDeltaAngle, Vector3.forward) * posDir;
+            posDistance += group.posDeltaDistance;
+
+        }
+        barrage.firing = false;
+
+
+        // if (data.shotOperationDelay > 0 && data.shotOperation != null)
+        // {
+        //     yield return new WaitForSeconds(data.shotOperationDelay);
+        //     data.shotOperation(shotList);
+        // }
+        if(data.delayOperations.Count > 0){
+            StartDelayOperation(data.delayOperations, shotList);
         }
 
         yield return null;
@@ -546,32 +752,6 @@ public class EnemyController : CharacterController
 
 
 
-    public void Hit()
-    {
-        if (danmakuList[danmakuIndex].type == DanmakuType.SurvivalCard) return;
-
-        // 击中音效
-        SFXManager.Instance.CreateSFX(0, 0.1f);
-
-        spellLife -= 1;
-        if (spellLife < 0) spellLife = 0;
-    }
-
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        var shot = other.GetComponent<Shot>();
-        // Debug.Log(shot.name);
-
-        if (shot != null && !shot.enemyShot)
-        {
-            if (spelling)
-            {
-                shot.TouchCharacter();
-                Hit();
-            }
-
-        }
-    }
+    #endregion
 
 }

@@ -20,7 +20,7 @@ MonoBehaviour:
   move:
     type: 1
     startPosition: {x: 6, y: 0, z: 0}
-    startDelay: 2
+    startDelay: 1.5
     minX: -2
     maxX: 0.5
     minY: -2
@@ -28,5 +28,4 @@ MonoBehaviour:
     interval: 2.5
     delay: 0.5
     duration: 1
-  hp: 150
-  survivalTime: 0
+  hp: 300

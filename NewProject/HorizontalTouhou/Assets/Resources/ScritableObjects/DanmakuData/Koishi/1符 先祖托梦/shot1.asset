@@ -13,8 +13,16 @@ MonoBehaviour:
   m_Name: shot1
   m_EditorClassIdentifier: 
   prefabIndex: 11
-  baseSpeed: 3
+  lifetime: 15
+  speed:
+    value: 3
+    min: 0
+    max: 3
+  deltaSpeed: -2
+  angle:
+    value: 0
+    min: 0
+    max: 0
+  deltaAngle: 0
   moveMode: 0
   wallCheckMode: 0
-  deltaSpeed: 0
-  deltaAngle: 0

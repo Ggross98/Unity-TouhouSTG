@@ -11,7 +11,7 @@ namespace Danmaku.Data
         /// <summary>
         /// 单发射击
         /// </summary>
-        Single,
+        // Single,
 
         /// <summary>
         /// 圆周射击
@@ -36,6 +36,11 @@ namespace Danmaku.Data
         Aimed,
 
         Random
+    }
+
+    public enum ShotOperationType
+    {
+        ChangeDirectionAndSpeed
     }
 
     [CreateAssetMenu(fileName = "Fire Data", menuName = "DanmakuData/FireData", order = 0)]
@@ -91,18 +96,21 @@ namespace Danmaku.Data
         /// 对子弹延迟执行的事件，默认为无
         /// </summary>
         /// <param name="shotList"></param>
-        public delegate void ShotOperation(List<Shot> shotList);
-        public ShotOperation shotOperation;
-        public float shotOperationDelay;
-        public void DefaultShotOperation(List<Shot> shotList)
-        {
-            return;
-        }
+        // public delegate void ShotOperation(List<Shot> shotList);
+        // public ShotOperation shotOperation;
+        // public float shotOperationDelay;
+        // public void DefaultShotOperation(List<Shot> shotList)
+        // {
+        //     return;
+        // }
+        public List<DelayOperation> delayOperations;
+        // public float sectorDeltaAngle = 0f;
 
-        public float sectorDeltaAngle = 0f;
+        public FireType type = FireType.Round;
 
-        public FireType type = FireType.Single;
-
+        public FireRound round;
+        public FireSector sector;
+        public FireSpray spray;
         
 
         /// <summary>
@@ -177,11 +185,40 @@ namespace Danmaku.Data
         }
     }
 
+    [System.Serializable]
+    public class FireRound{
+        
+    }
+
+    [System.Serializable]
+    public class FireSector{
+        public float deltaAngle;
+    }
+
+    [System.Serializable]
+    public class FireSpray{
+        public LimitedValue fire;
+        public LimitedValue angle;
+        // public float rate;
+    }
 
 
 
+    [System.Serializable]
+    public class DelayOperation{
+        public ShotOperationType type = ShotOperationType.ChangeDirectionAndSpeed;
+        public float delay;
+        
 
+        public DirectionType directionType;
+        public Vector2 direction;
 
+        public LimitedValue speed;
+        public float deltaSpeed;
+
+        public LimitedValue angle;
+        public float deltaAngle;
+    }
 
 
     // public class FireRoundData : FireData

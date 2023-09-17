@@ -13,8 +13,22 @@ MonoBehaviour:
   m_Name: Petal_Blue_0
   m_EditorClassIdentifier: 
   prefabIndex: 7
+  lifetime: 0
+  speed:
+    value: 6
+    min: 6
+    max: 6
   baseSpeed: 6
+  minSpeed: 0
+  maxSpeed: 0
+  deltaSpeed: 0
+  angle:
+    value: 0
+    min: 0
+    max: 0
+  baseAngle: 0
+  minAngle: 0
+  maxAngle: 0
+  deltaAngle: -10
   moveMode: 0
   wallCheckMode: 0
-  deltaSpeed: 0
-  deltaAngle: -10

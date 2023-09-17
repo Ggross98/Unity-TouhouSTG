@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60c59eb36c194674495dfb128ec9f399, type: 3}
   m_Name: "6\u7B26"
   m_EditorClassIdentifier: 
-  danmakuName: "\u77DB\u76FE\u300C\u81EA\u6211\u300D \u6CA1\u505A\u597D"
+  danmakuName: "\u77DB\u76FE\u300C\u81EA\u6211\u300D "
   data:
   - {fileID: 11400000, guid: e7e077c116d8b7b47affda8d408d7404, type: 2}
   - {fileID: 11400000, guid: 9fe8c49892becac4bae613508bd05867, type: 2}
+  - {fileID: 11400000, guid: 562903124a874b54995f34065ad606f7, type: 2}
   type: 0
   animation: 0
   move:
     type: 0
     startPosition: {x: 0, y: 0, z: 0}
-    startDelay: 1
+    startDelay: 0
     minX: -2
     maxX: 0.5
     minY: -2
@@ -29,5 +30,4 @@ MonoBehaviour:
     interval: 2
     delay: 0
     duration: 1
-  hp: 100
-  survivalTime: 0
+  hp: 500

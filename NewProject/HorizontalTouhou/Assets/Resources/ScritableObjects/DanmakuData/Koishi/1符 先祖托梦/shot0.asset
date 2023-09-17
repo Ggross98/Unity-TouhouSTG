@@ -13,8 +13,22 @@ MonoBehaviour:
   m_Name: shot0
   m_EditorClassIdentifier: 
   prefabIndex: 6
+  lifetime: 0
+  speed:
+    value: 7
+    min: 7
+    max: 7
   baseSpeed: 7
+  minSpeed: 0
+  maxSpeed: 0
+  deltaSpeed: 0
+  angle:
+    value: 0
+    min: 0
+    max: 0
+  baseAngle: 0
+  minAngle: 0
+  maxAngle: 0
+  deltaAngle: 0
   moveMode: 0
   wallCheckMode: 0
-  deltaSpeed: 0
-  deltaAngle: 0

@@ -17,8 +17,8 @@ MonoBehaviour:
   interval: 2.5
   fireData: {fileID: 11400000, guid: 7b87253a237164242a73399d9b196f67, type: 2}
   fireOffset:
-    cycle: 0
+    cycle: 12
     startCycleIndex: 0
     range: 360
-    type: 0
+    type: 1
     reciprocate: 0

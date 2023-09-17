@@ -22,12 +22,12 @@ namespace Danmaku.Data
         /// <summary>
         /// 从符卡开始后到释放第一枚弹幕的延迟
         /// </summary>
-        public float startDelay;
+        [Tooltip("从符卡开始后到释放第一枚弹幕的延迟")]public float startDelay;
 
         /// <summary>
         /// 两轮射击之间的间隔
         /// </summary>
-        public float interval;
+        [Tooltip("两轮射击之间的间隔")]public float interval;
 
         /// <summary>
         /// 每次射击的信息
@@ -39,7 +39,7 @@ namespace Danmaku.Data
         /// </summary>
         // public int fireOffsetCycle;
 
-        public FireOffset fireOffset;
+        [Tooltip("射击角度变化的周期")]public FireOffset fireOffset;
 
         
 

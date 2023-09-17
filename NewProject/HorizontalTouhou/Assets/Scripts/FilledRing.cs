@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class FilledRing : MonoBehaviour
 {
     [SerializeField] private Image image;
+    [SerializeField] private Color[] colors;
     // [SerializeField] private EnemyController enemy;
     private RectTransform rect;
 
@@ -31,10 +32,11 @@ public class FilledRing : MonoBehaviour
         }
     }
 
-    public void Show(){
+    public void Show(int color = 0){
 
         // RefreshPosition();
         showing = true;
+        image.color = colors[color];
         gameObject.SetActive(true);
     }
 
@@ -52,7 +54,7 @@ public class FilledRing : MonoBehaviour
         Vector3 wPos = enemy.transform.position;
         Vector2 uPos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(transform.parent.GetComponent<RectTransform>(), wPos, null, out uPos);
-        Debug.Log(wPos + ", " + uPos);
+        // Debug.Log(wPos + ", " + uPos);
         rect.localPosition = uPos;
     
     }

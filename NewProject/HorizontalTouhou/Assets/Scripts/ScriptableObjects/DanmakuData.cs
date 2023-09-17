@@ -44,7 +44,7 @@ namespace Danmaku.Data
         /// <summary>
         /// For Survival Card
         /// </summary>
-        public float survivalTime;
+        // public float survivalTime;
 
 
         

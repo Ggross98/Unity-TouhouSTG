@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: barrage0
   m_EditorClassIdentifier: 
   shotData: {fileID: 11400000, guid: 4c645a5e75ecaec47b52bb3ab28ddb83, type: 2}
-  startDelay: 2
-  interval: 0.6
+  startDelay: 1
+  interval: 0.4
   fireData: {fileID: 11400000, guid: babf15afb5e054443a6acd01f40c0508, type: 2}
   fireOffset:
-    cycle: 24
+    cycle: 21
     startCycleIndex: 0
     range: 360
     type: 1

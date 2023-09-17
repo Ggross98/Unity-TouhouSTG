@@ -29,4 +29,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/OldStages/Stage_Yiji.unity
     guid: b5d13fb7c17490947b09cfd825bd83df
+  - enabled: 0
+    path: Assets/Scenes/Mokou.unity
+    guid: 456e68f6e964bf14e882d8f0d729d9c5
   m_configObjects: {}

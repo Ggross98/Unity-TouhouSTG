@@ -23,13 +23,13 @@ public class GameUI : SingletonMonoBehaviour<GameUI>
         spellCardName.text = name;
     }
 
-    public void ShowHPRing(){
-        enemyHPRing.Show();
-    }
+    // public void ShowHPRing(){
+    //     enemyHPRing.Show();
+    // }
 
-    public void FillHPRing(){
-        enemyHPRing.Show();
-        enemyHPRing.Fill();
+    public void FillHPRing(float duration = 0.5f, int color = 0){
+        enemyHPRing.Show(color);
+        enemyHPRing.Fill(duration);
     }
 
     public void HideHPRing(){

@@ -53,8 +53,9 @@ public class Barrage : MonoBehaviour
 
     public Shot CreateBullet(Vector3 dir, float distance, Vector3 deltaPos){
         var prefabIndex = shotData.prefabIndex;
-        var baseSpeed = shotData.baseSpeed;
-
+        // var baseSpeed = shotData.baseSpeed;
+        var baseSpeed = shotData.speed.value;
+        
         dir = dir.normalized;
         var startPos = transform.position + dir * distance + deltaPos;
         // var shot = shotManager.CreateShot(prefabIndex, startPos, dir, baseSpeed, true);
@@ -80,25 +81,25 @@ public class Barrage : MonoBehaviour
     /// <param name="speed"></param>
     /// <param name="distance"></param>
     /// <returns></returns>
-    public List<Shot> FireSector(Vector3 target, int fire, float angle, float distance = 0f)
-    {
+    // public List<Shot> FireSector(Vector3 target, int fire, float angle, float distance = 0f)
+    // {
 
-        float deltaAngle = angle / (fire - 1);
+    //     float deltaAngle = angle / (fire - 1);
 
-        var centerDir = (target - transform.position).normalized;
-        var dir = Quaternion.AngleAxis(-angle / 2, Vector3.forward) * centerDir;
-        var offset = Quaternion.AngleAxis(deltaAngle, Vector3.forward);
+    //     var centerDir = (target - transform.position).normalized;
+    //     var dir = Quaternion.AngleAxis(-angle / 2, Vector3.forward) * centerDir;
+    //     var offset = Quaternion.AngleAxis(deltaAngle, Vector3.forward);
 
-        var shotList = new List<Shot>();
-        for(int i = 0; i < fire; i++)
-        {
-            var shot = CreateBullet(dir, distance, Vector3.zero);
-            shotList.Add(shot);
+    //     var shotList = new List<Shot>();
+    //     for(int i = 0; i < fire; i++)
+    //     {
+    //         var shot = CreateBullet(dir, distance, Vector3.zero);
+    //         shotList.Add(shot);
 
-            dir = offset * dir;
-        }
-        return shotList;
-    }
+    //         dir = offset * dir;
+    //     }
+    //     return shotList;
+    // }
 
     /// <summary>
     /// 发射圆周
@@ -128,8 +129,6 @@ public class Barrage : MonoBehaviour
         return shotList;
 
     }
-
-
     public List<Shot> FireSector(Vector3 startDir, float startAngle, int fire, float deltaAngle, float distance, Vector3 deltaPos)
     {
         var centerDir = startDir.normalized;
@@ -153,6 +152,23 @@ public class Barrage : MonoBehaviour
 
     }
 
+    public List<Shot> FireSpray(Vector3 startDir, float startAngle, LimitedValue fireRange, LimitedValue angleRange, float distance, Vector3 deltaPos){
+        var centerDir = startDir.normalized;
+        var fire = Random.Range((int)fireRange.min, (int)fireRange.max + 1);
+
+        
+        var shotList = new List<Shot>();
+        for(int i = 0; i<fire; i++){
+            var angle = Random.Range(angleRange.min, angleRange.max) + startAngle;
+            var offset = Quaternion.AngleAxis(angle, Vector3.forward);
+            var dir = offset * centerDir;
+
+            var shot = CreateBullet(dir, distance, deltaPos);
+            shotList.Add(shot);
+        }
+
+        return shotList;
+    }
     // public List<Shot> FireRound(FireData data, float deltaAngle){
     //     var startAngle = data.startAngle + deltaAngle;
     //     // if(data.offsetAngle != null) data.offsetAngle(counter);

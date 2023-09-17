@@ -13,18 +13,29 @@ MonoBehaviour:
   m_Name: TestFire
   m_EditorClassIdentifier: 
   startDir: {x: 1, y: 0, z: 0}
-  aimed: 1
+  directionType: 2
   startAngle: 0
   startDistance: 0
-  count: 16
+  count: 1
   posDir: {x: 0, y: 0, z: 0}
   posStartDistance: 0
-  shotOperationDelay: 0
-  type: 1
+  delayOperations: []
+  type: 2
+  sector:
+    deltaAngle: 0
+  spray:
+    fire:
+      value: 0
+      min: 1
+      max: 1
+    angle:
+      value: 0
+      min: -10
+      max: 10
   group:
-    num: 12
-    interval: 0.03
+    num: 9
+    interval: 0.02
     deltaDistance: 0
-    deltaAngle: 3
+    deltaAngle: 0
     posDeltaAngle: 0
     posDeltaDistance: 0

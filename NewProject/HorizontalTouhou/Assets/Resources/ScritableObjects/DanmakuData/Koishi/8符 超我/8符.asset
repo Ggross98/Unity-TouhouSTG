@@ -16,7 +16,7 @@ MonoBehaviour:
   data:
   - {fileID: 11400000, guid: dd4b6e440a43de747ada81ee361dd927, type: 2}
   - {fileID: 11400000, guid: bd43a196f5ebab44c9e8b12fc7e701e1, type: 2}
-  type: 0
+  type: 1
   animation: 0
   move:
     type: 0
@@ -29,5 +29,4 @@ MonoBehaviour:
     interval: 2
     delay: 0
     duration: 1
-  hp: 350
-  survivalTime: 0
+  hp: 5500

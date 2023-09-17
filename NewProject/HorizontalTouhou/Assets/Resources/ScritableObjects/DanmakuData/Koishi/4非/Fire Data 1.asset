@@ -13,14 +13,21 @@ MonoBehaviour:
   m_Name: Fire Data 1
   m_EditorClassIdentifier: 
   startDir: {x: 1, y: 0, z: 0}
-  aimed: 1
+  directionType: 0
   startAngle: 0
   startDistance: 0
   count: 16
   posDir: {x: 1, y: -1, z: 0}
   posStartDistance: 2
   shotOperationDelay: 0
-  type: 1
+  sectorDeltaAngle: 0
+  type: 0
+  sector:
+    deltaAngle: 0
+  spray:
+    totalAngle: 0
+    duration: 0
+    rate: 0
   group:
     num: 8
     interval: 0.07

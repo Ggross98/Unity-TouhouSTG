@@ -22,18 +22,24 @@ namespace Danmaku.Data
     {
         public int prefabIndex;
         public float lifetime = 5f;
-        public float baseSpeed;
-        public MoveMode moveMode;
-        public WallCheckMode wallCheckMode;
+
+
+        public LimitedValue speed = new LimitedValue(1,1,1);
         public float deltaSpeed = 0f;
+
+        public LimitedValue angle = new LimitedValue(0,0,0);
         public float deltaAngle = 0f;
 
-        public ShotData(int index, float speed, MoveMode move = MoveMode.Straight, WallCheckMode wallCheck = WallCheckMode.Clear)
+
+        public MoveMode moveMode =MoveMode.Straight;
+        public WallCheckMode wallCheckMode = WallCheckMode.Clear;
+        
+        public ShotData(int index, float baseSpeed)
         {
             prefabIndex = index;
-            baseSpeed = speed;
-            moveMode = move;
-            wallCheckMode = wallCheck;
+            speed = new LimitedValue(baseSpeed, baseSpeed, baseSpeed);
+            
+            // this.baseSpeed = baseSpeed;
         }
     }
 

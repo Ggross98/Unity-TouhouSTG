@@ -7,6 +7,8 @@ public class Shot : MonoBehaviour {
 
     // [SerializeField] private SpriteRenderer shotRenderer;
    
+    // public ShotData data;
+
     public int damage = 1;
 
     public float lifetime = 5f;
@@ -14,16 +16,18 @@ public class Shot : MonoBehaviour {
 
     public bool enemyShot = false;
 
-    public float baseSpeed = 5f;
+    
     private float speed;
-    public float minSpeed = 1f, maxSpeed = 30f;
+    private float baseSpeed, minSpeed, maxSpeed, deltaSpeed;
 
-    public float deltaSpeed = 0f;
-    public float deltaAngle = 0f;
+    private float angle;
+    private float baseAngle, minAngle, maxAngle, deltaAngle;
+
 
     private float suspendTime = 0;
 
     public Vector3 direction;
+    public Vector3 startDirection;
 
     //private Rigidbody2D rigidbody2D;
 
@@ -44,17 +48,41 @@ public class Shot : MonoBehaviour {
         this.deactiveAction = action;
     }
 
-    private void Init(Vector3 pos, Vector3 dir, float baseSpeed, float deltaSpeed, float deltaAngle, bool enemy){
-        // shotRenderer.sprite = s;
+    public void SetSpeed(LimitedValue v, float delta){
+        baseSpeed = v.value;
+        minSpeed = v.min;
+        maxSpeed = v.max;
+        deltaSpeed = delta;
+
+        speed = baseSpeed;
+    }
+
+    public void SetAngle(LimitedValue v, float delta){
+        baseAngle = v.value;
+        minAngle = v.min;
+        maxAngle = v.max;
+        deltaAngle = delta;
+
+        angle = baseAngle;
+    }
+
+    public void LoadData(ShotData sd){
+        if(sd.lifetime > 5) lifetime = sd.lifetime;
+        SetSpeed(sd.speed, sd.deltaSpeed);
+        SetAngle(sd.angle, sd.deltaAngle);
+    }
+
+    private void Init(Vector3 pos, Vector3 dir, bool enemy){
+        // 位置
         transform.position = pos;
 
-        this.baseSpeed = baseSpeed;
-        this.speed = baseSpeed;
-        this.deltaAngle = deltaAngle;
-        this.deltaSpeed = deltaSpeed;
+        // 速度
+        // this.speed = baseSpeed;
 
-
-        this.direction = dir.normalized;
+        // 方向
+        this.startDirection = dir.normalized;
+        this.direction = startDirection;
+        // this.angle = baseAngle;
         Toward();
 
         this.enemyShot = enemy;
@@ -64,13 +92,14 @@ public class Shot : MonoBehaviour {
     }
 
     public void Init(Vector3 pos, Vector3 dir, bool enemy, ShotData sd){
-        Init(pos, dir, sd.baseSpeed, sd.deltaSpeed, sd.deltaAngle, enemy);
+        LoadData(sd);
+        Init(pos, dir, enemy);
     }
 
     public void StartMove(Vector3 dir){
 
-        moveMode = MoveMode.Straight;
-        this.direction = dir;
+        // moveMode = MoveMode.Straight;
+        // this.direction = dir;
 
         leftLifetime = lifetime;
         moving = true;
@@ -95,26 +124,37 @@ public class Shot : MonoBehaviour {
         VFXManager.Instance.CreateVFX(0, transform.position);
     }
 
-    public void ChangeSpeed(float ds){
-        speed += ds;
+    public void ChangeSpeed(float delta){
+        speed += delta;
         if(speed < minSpeed) speed = minSpeed;
         if(speed > maxSpeed) speed = maxSpeed;
     }
 
-    public void ChangeAngle(float angle){
+    public void ChangeAngle(float delta){
+        angle += delta;
+        if(angle < minAngle) angle = minAngle;
+        if(angle > maxAngle) angle = maxAngle;
+
         Quaternion offset = Quaternion.AngleAxis(angle, Vector3.forward);
-        direction = offset * direction;
+        direction = offset * startDirection;
     }
 
     void FixedUpdate()
     {
         if(!moving) return;
+
+        if(suspendTime > 0){
+            suspendTime -= Time.deltaTime;
+            return;
+        }
+
+
         
         switch(moveMode){
             case MoveMode.Straight:
 
-                if(deltaSpeed != 0) ChangeSpeed(deltaSpeed * Time.deltaTime);
-                if(deltaAngle != 0) ChangeAngle(deltaAngle * Time.deltaTime);
+                ChangeSpeed(deltaSpeed * Time.deltaTime);
+                ChangeAngle(deltaAngle * Time.deltaTime);
                 
 
                 transform.position += direction * speed * Time.deltaTime;
@@ -156,16 +196,16 @@ public class Shot : MonoBehaviour {
     }
 
     private void Toward(){
-        float angle = 0;
+        float eulerAngle = 0;
         if (direction.x> 0)
         {
-            angle = -Vector3.Angle(Vector3.up, direction.normalized);
+            eulerAngle = -Vector3.Angle(Vector3.up, direction.normalized);
         }
         else
         {
-            angle = Vector3.Angle(Vector3.up, direction.normalized);
+            eulerAngle = Vector3.Angle(Vector3.up, direction.normalized);
         }
-        transform.eulerAngles = new Vector3(0, 0, angle);
+        transform.eulerAngles = new Vector3(0, 0, eulerAngle);
     }
 
     /*
@@ -192,299 +232,11 @@ public class Shot : MonoBehaviour {
         leftLifetime = lifetime;
     }
 
-
-
-
-
-
-
-    /// <summary>
-    /// 动态变换移动方向的移动模式
-    /// </summary>
-    /// <param name="endTime">移动结束时间</param>
-    /// <param name="dirChangeTime"><方向转变时间</param>
-    /// <param name="angle">方向改变的角度</param>
-    /// <returns></returns>
-    public IEnumerator DirChangeMoveMode(float endTime, float dirChangeTime, float angle)
-    {
-        // float time = 0;
-        // bool isRotate = true;
-        // isBallModePlay = true;
-        // isStraightMove = false;
-        // while (isBallModePlay && this!=null)
-        // {
-        //     time += Time.deltaTime;
-        //     transform.position += baseSpeed * direction * Time.deltaTime;
-        //     if (time >= dirChangeTime && isRotate)
-        //     {
-        //         isRotate = false;
-        //         StartCoroutine(BulletRotate(angle));
-        //     }
-
-        //     yield return null;
-        // }
-
-        yield return null;
-    }
-
-    /// <summary>
-    /// 弹幕动态改变移动方向
-    /// </summary>
-    IEnumerator BulletRotate(float angle)
-    {
-        // while (isBallModePlay&&this!=null)
-        // {
-        //     Quaternion tempQuat = Quaternion.AngleAxis(angle, Vector3.forward);
-        //     direction = tempQuat * direction;
-        //     yield return new WaitForSeconds(0.1f);
-        // }
-        yield return null;
-    }
-
-    public IEnumerator CircularMove(Vector3 center,float angleSpeed)
-    {
-        // float r;
-        // //float angled = 0f;
-        // isCircularMove = true;
-        // while(isCircularMove && this != null)
-        // {
-        //     r = (center - transform.position).magnitude;
-
-        //     //angled += (angleSpeed  * Time.deltaTime) % 360;//累加已经转过的角度
-
-        //     /*
-        //     float posX = r * (Mathf.Cos(angled) + angled * Mathf.Sin(angled));//计算x位置
-        //     float posY = r * (Mathf.Sin(angled) - angled * Mathf.Cos(angled));//计算y位置
-        //     transform.position = new Vector3(posX, posY,0) + center;//更新位置
-        //     */
-        //     bool clockwise = angleSpeed > 0;
-        //     Vector3 a = r * angleSpeed*angleSpeed * GetNormalVector3(transform .position -center,clockwise );
-        //     direction = (direction*baseSpeed +a).normalized;
-        //     yield return new WaitForSeconds(0.1f);
-        // }
-
-        yield return null;
-    }
-
-    public IEnumerator CircularMove(Vector3 center, float distance,float angleSpeed)
-    {
-        // isCircularMove = true;
-
-        // bool clockwise = angleSpeed > 0;
-        // while (isCircularMove && this != null)
-        // {
-            
-        //     Vector3 a = distance * angleSpeed * angleSpeed * GetNormalVector3(transform.position - center, clockwise);
-        //     direction = (direction * baseSpeed + a).normalized;
-        //     yield return new WaitForSeconds(0.1f);
-        // }
-
-        yield return null;
-    }
-
-
-    public IEnumerator Suspend(float time)
-    {
-        suspendTime = time;
-        yield return null;
-    }
-
-    /// <summary>
-    /// 在一定时间后暂停若干秒
-    /// </summary>
-    /// <param name="starttime"></param>
-    /// <param name="pausetime"></param>
-    /// <returns></returns>
-    public IEnumerator Suspend(float starttime,float pausetime)
-    {
-        float timeSum = 0;
-        while (this != null && timeSum < starttime )
-        {
-            timeSum += Time.deltaTime;
-            yield return new WaitForSeconds(0.1f);
-        }
-        if (this != null)
-        {
-            suspendTime = pausetime;
-        }
-        yield return null;
-    }
-    /// <summary>
-    /// 子弹在一定时间后改变
-    /// </summary>
-    /// <param name="time"></param>
-    /// <param name="newSpeed"></param>
-    /// <param name="newDirection"></param>
-    /// <returns></returns>
-    public IEnumerator ChangeDirAndSpeed(float time,float newSpeed,Vector3 newDirection)
-    {
-        float timeSum = 0;
-        while (this != null && timeSum < time)
-        {
-            timeSum += Time.deltaTime;
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        if (this != null)
-        {
-
-            baseSpeed = newSpeed;
-            direction = newDirection;
-        }
-        yield return null;
-    }
-
-    public IEnumerator DelaySniper(float time, float newSpeed,Transform player)
-    {
-        float timeSum = 0;
-        while (this != null && timeSum < time)
-        {
-            timeSum += Time.deltaTime;
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        if (this != null)
-        {
-
-            baseSpeed = newSpeed;
-            if (player != null)
-            {
-                direction = (player.position - transform.position).normalized;
-            }
-        }
-        yield return null;
-    }
-
-    public IEnumerator BounceMode()
-    {
-        //世界坐标转为屏幕坐标
-        Vector3 screenPos;
-        // bounceable = true;
-
-        while (this != null)
-        {
-            screenPos = Camera.main.WorldToScreenPoint(transform.position);
-            if (screenPos.x <= 0 || screenPos.x >= Screen.width)//左右边界
-            {
-                direction = new Vector3(-direction .x,direction.y,0);
-            }
-            if (screenPos.y <=0|| screenPos.y >= Screen.height)//上下边界
-            {
-                direction = new Vector3(direction.x, -direction.y, 0);
-            }
-            yield return new WaitForSeconds(0.05f);
-        }
-        yield return null;
-    }
-
-    public IEnumerator BounceMode(int time)
-    {
-        // int t = 0;
-        // bounceable = true;
-        // //世界坐标转为屏幕坐标
-        // Vector3 screenPos;
-
-        // while (this != null&&bounceable )
-        // {
-        //     screenPos = Camera.main.WorldToScreenPoint(transform.position);
-        //     if (screenPos.x <= 0 || screenPos.x >= Screen.width)//左右边界
-        //     {
-        //         direction = new Vector3(-direction.x, direction.y, 0);
-        //         t++;
-        //     }
-        //     if (screenPos.y <= 0 || screenPos.y >= Screen.height)//上下边界
-        //     {
-        //         direction = new Vector3(direction.x, -direction.y, 0);
-        //         t++;
-        //     }
-        //     if (t >= time) bounceable  = false;
-
-        //     yield return new WaitForSeconds(0.05f);
-        // }
-        // while (this != null)
-        // {
-        //     screenPos = Camera.main.WorldToScreenPoint(transform.position);
-        //     if (screenPos.x <= 0 || screenPos.x >= Screen.width || screenPos.y <= 0 || screenPos.y >= Screen.height)
-        //     {
-        //         Destroy(gameObject);
-        //     }
-        //     yield return new WaitForSeconds(0.1f);
-        // }
-        yield return null;
-    }
-
-
-
-    public void ChangeDirection(Vector3 newDirection)
-    {
-        direction = newDirection.normalized;
-    }
-
-    public Vector3 GetNormalVector3(Vector3 v,bool clockwise)
-    {
-        Vector3 target = v.normalized;
-        Vector3 result=new Vector3(1,0,0);
-        if (target.y == 0)
-        {
-            result = new Vector3(0, 1, 0);
-        }
-        else
-        {
-            result.y = -target.x / target.y;
-        }
-        if(clockwise)
-        {
-            if (target.y > 0)
-            {
-                return result.normalized;
-            }
-            else
-            {
-                return -(result.normalized );
-            }
-        }
-        else
-        {
-            if (target.y > 0)
-            {
-                return -result.normalized;
-            }
-            else
-            {
-                return (result.normalized);
-            }
-        }
-        //return result;
-    }
-
-    /// <summary>
-    /// 弹幕动态改变移动方向
-    /// </summary>
-    IEnumerator BulletRotate(float angle,float delay)
-    {
-        while (this != null)
-        {
-            Quaternion tempQuat = Quaternion.AngleAxis(angle, Vector3.forward);
-            direction = tempQuat * direction;
-            yield return new WaitForSeconds(delay);
-        }
-    }
-
-    // void OnTriggerEnter2D(Collider2D collider)
-    // {
-    //     LaserClearBullet laser = collider.GetComponent<LaserClearBullet>();
-    //     /*
-    //     if (laser != null&&laser.IsBombing ())
-    //     {
-    //         Destroy(gameObject);
-    //     }*/
-    // }
-
     #region Getters and Setters
 
     public void SetSpeed(float s)
     {
-        baseSpeed = s;
+        speed = s;
     }
 
     public void SetDirection(Vector3 s)
@@ -492,27 +244,5 @@ public class Shot : MonoBehaviour {
         direction = s;
     }
 
-    // public bool IsStraightMove()
-    // {
-    //     return isStraightMove;
-    // }
-
-    // public void SetStraightMove(bool b)
-    // {
-    //     isStraightMove = b;
-    // }
-
-    // public bool IsCircularMove()
-    // {
-    //     return isCircularMove;
-    // }
-
-    // public void SetCircularMove(bool b)
-    // {
-    //     isCircularMove = b;
-    // }
-
-
-    
     #endregion
 }

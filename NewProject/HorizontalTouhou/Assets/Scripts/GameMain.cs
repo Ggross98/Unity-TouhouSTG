@@ -14,6 +14,19 @@ public class GameMain : SingletonMonoBehaviour<GameMain>
     [SerializeField] private GameOverPanel overPanel;
     [SerializeField] private AudioClip bgm;
 
+    public bool getSpellBonus;
+    private int spellBonus;
+
+    public void StartDanmaku(){
+        getSpellBonus = true;
+    }
+
+    public void EndDanmaku(bool isSpellcard){
+        if(getSpellBonus){
+            spellBonus += (isSpellcard ? 5000 : 1000);
+        }
+    }
+
 
     public DialogueData dialogueData;
 
@@ -39,10 +52,14 @@ public class GameMain : SingletonMonoBehaviour<GameMain>
         player.GetComponent<PlayableDirector>().Play();
 
 
+        
+
     }
 
-    private void Update() {
 
+    private void Update() {
+        Application.targetFrameRate = 120;
+        
         switch(state){
             case GameState.Intro:
                 if(dialogue.IsShowing()){
@@ -86,6 +103,8 @@ public class GameMain : SingletonMonoBehaviour<GameMain>
         state = GameState.Playing;
 
         BGMManager.Instance.PlayAt(0, false);
+
+        spellBonus = 0;
     }
 
     public void GameOver(bool win = false){
@@ -94,6 +113,7 @@ public class GameMain : SingletonMonoBehaviour<GameMain>
 
         overPanel.SetTitle(win ? "Stage Clear" : "Game Over");
         overPanel.Show();
+        overPanel.ShowScore(win ? 20000 : 2000, player.life * 5000, spellBonus);
 
         GameUI.Instance.HideAll();
 
