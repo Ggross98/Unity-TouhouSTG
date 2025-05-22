@@ -1,34 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using DG.Tweening;
 using Danmaku.Data;
+using DG.Tweening;
+using UnityEngine;
 
 public class EnemyController : CharacterController
 {
-
     // [SerializeField] private Barrage[] barrages;
     // private BarrageData[] barrageData;
 
     private BarrageManager barrageManager;
     private List<Barrage> barrages;
 
-
-
     [SerializeField]
     private List<DanmakuData> danmakuList;
     private int danmakuIndex;
-    // private DanmakuData danmaku;
 
+    // private DanmakuData danmaku;
 
     // [SerializeField] private Animator animator;
     // [SerializeField] private float minX = 3f, maxX = 6f;
     // [SerializeField] private float minY = -3f, maxY = 3f;
-    [SerializeField] private Transform player;
-
+    [SerializeField]
+    private Transform player;
 
     // [SerializeField] private FilledRing hpRing;
-
 
     Vector3 centerPosition = new Vector3(5.5f, 0, 0);
 
@@ -40,38 +36,42 @@ public class EnemyController : CharacterController
     private DanmakuMove move;
     #endregion
 
-    public int spellLife, spellMaxLife;
+    public int spellLife,
+        spellMaxLife;
+
     // float spellTime, spellMaxTime;
 
     #region 弹幕间移动
-    [SerializeField] float spellInterval = 1.5f;
+    [SerializeField]
+    float spellInterval = 1.5f;
     #endregion
 
     private bool spelling = false;
+
     // private bool interactive = false;
 
-    [SerializeField] private Transform magicCircle;
-    [SerializeField] private ShotEraser shotEraser;
+    [SerializeField]
+    private Transform magicCircle;
+
+    [SerializeField]
+    private ShotEraser shotEraser;
 
     private void Awake()
     {
         barrageManager = BarrageManager.Instance;
     }
 
-    private void Start()
-    {
-
-    }
+    private void Start() { }
 
     // private static ShotData sd = new ShotData(2, 6f);
 
     private void Update()
     {
-        if (!interactive) return;
+        if (!interactive)
+            return;
 
         if (spelling)
         {
-
             // 发射
             var danmaku = danmakuList[danmakuIndex];
             for (int i = 0; i < danmaku.data.Count; i++)
@@ -82,21 +82,23 @@ public class EnemyController : CharacterController
                 barrage.timer -= Time.deltaTime;
                 if (barrage.timer <= 0)
                 {
-
-
                     if (danmaku.animation == DanmakuAnimation.AttackBeforeFire)
                     {
                         animator.SetTrigger("Attack");
-                        StartCoroutine(WaitForSeconds(0.4f, () =>
-                        {
-                            InvokeBarrage(barrage, data);
-                        }));
+                        StartCoroutine(
+                            WaitForSeconds(
+                                0.4f,
+                                () =>
+                                {
+                                    InvokeBarrage(barrage, data);
+                                }
+                            )
+                        );
                     }
                     else
                     {
                         InvokeBarrage(barrage, data);
                     }
-
 
                     barrage.timer = data.interval;
                 }
@@ -106,7 +108,6 @@ public class EnemyController : CharacterController
             // var move = danmaku.move;
             if (move.type == DanmakuMoveType.RandomMove)
             {
-
                 moveTimer -= Time.deltaTime;
 
                 if (moveTimer <= 0)
@@ -121,14 +122,15 @@ public class EnemyController : CharacterController
                 }
             }
 
-
             // 时符：按时间掉血
             if (danmaku.type == DanmakuType.SurvivalCard)
             {
                 spellLife -= 1;
             }
-            else{
-                if(hitByBomb){
+            else
+            {
+                if (hitByBomb)
+                {
                     spellLife -= 1;
                 }
             }
@@ -138,36 +140,38 @@ public class EnemyController : CharacterController
             {
                 EndDanmaku();
             }
-            
-
         }
-
-
     }
-
 
     public override void StartBattle()
     {
-
         animator.SetTrigger("Intro");
 
-        StartCoroutine(WaitForSeconds(1f, ()=>{
+        StartCoroutine(
+            WaitForSeconds(
+                1f,
+                () =>
+                {
+                    SetInteractive(true);
 
-            SetInteractive(true);
-            
-            danmakuIndex = 0;
-            StartDanmaku();
-
-            
-        }));
-
-        
+                    danmakuIndex = 0;
+                    StartDanmaku();
+                }
+            )
+        );
     }
 
-    [SerializeField] private float startDanmakuMoveDelay = 0.1f;
-    [SerializeField] private float startDanmakuMoveDuration = 1f;
-    [SerializeField] private float hpRingFillDuration = 0.5f;
-    [SerializeField] private float startDanmakuIdleDuration = 0.1f;
+    [SerializeField]
+    private float startDanmakuMoveDelay = 0.1f;
+
+    [SerializeField]
+    private float startDanmakuMoveDuration = 1f;
+
+    [SerializeField]
+    private float hpRingFillDuration = 0.5f;
+
+    [SerializeField]
+    private float startDanmakuIdleDuration = 0.1f;
 
     private void StartDanmaku()
     {
@@ -179,9 +183,10 @@ public class EnemyController : CharacterController
 
         // 移动至初始位置
         var distance = (transform.position - move.startPosition).magnitude;
-        
+
         var waitTime = startDanmakuMoveDelay;
-        if(distance > 0.5f){
+        if (distance > 0.5f)
+        {
             MoveTo(move.startPosition, startDanmakuMoveDuration, startDanmakuMoveDelay);
             waitTime = startDanmakuMoveDuration + startDanmakuMoveDelay;
         }
@@ -199,18 +204,18 @@ public class EnemyController : CharacterController
         spellLife = spellMaxLife;
         switch (danmaku.type)
         {
-            case DanmakuType.SpellCard:                 // 符卡
-                
+            case DanmakuType.SpellCard: // 符卡
+
                 StartCoroutine(ShowMagicCircle(1f, 2f));
                 animator.SetTrigger("SpellCard");
                 break;
 
-            case DanmakuType.NonSpellCard:              // 非符
+            case DanmakuType.NonSpellCard: // 非符
                 // spellMaxLife = danmaku.hp;
                 // spellLife = spellMaxLife;
                 break;
 
-            case DanmakuType.SurvivalCard:              // 时符
+            case DanmakuType.SurvivalCard: // 时符
                 // spellMaxTime = danmaku.survivalTime;
                 // spellTime = spellMaxTime;
                 // spellMaxLife = danmaku.hp;
@@ -239,22 +244,30 @@ public class EnemyController : CharacterController
         // 显示符卡名
         GameUI.Instance.ShowSpellName(danmaku.danmakuName);
 
-        StartCoroutine(WaitForSeconds(waitTime + startDanmakuIdleDuration, () =>
-        {
-            // 显示符卡生命值
-            var ringColor = danmaku.type == DanmakuType.SurvivalCard ? 1 : 0;
-            GameUI.Instance.FillHPRing(hpRingFillDuration, ringColor);
-        }));
+        StartCoroutine(
+            WaitForSeconds(
+                waitTime + startDanmakuIdleDuration,
+                () =>
+                {
+                    // 显示符卡生命值
+                    var ringColor = danmaku.type == DanmakuType.SurvivalCard ? 1 : 0;
+                    GameUI.Instance.FillHPRing(hpRingFillDuration, ringColor);
+                }
+            )
+        );
 
-        StartCoroutine(WaitForSeconds(waitTime + startDanmakuIdleDuration + hpRingFillDuration, () => {
-            spelling = true;
-        }));
+        StartCoroutine(
+            WaitForSeconds(
+                waitTime + startDanmakuIdleDuration + hpRingFillDuration,
+                () =>
+                {
+                    spelling = true;
+                }
+            )
+        );
 
         GameMain.Instance.StartDanmaku();
     }
-
-
-
 
     private void EndDanmaku()
     {
@@ -272,7 +285,6 @@ public class EnemyController : CharacterController
 
         spelling = false;
 
-
         // 动画显示
         GameUI.Instance.HideHPRing();
         StartCoroutine(BreakMagicCircle());
@@ -280,7 +292,6 @@ public class EnemyController : CharacterController
         danmakuIndex++;
         if (danmakuIndex == danmakuList.Count)
         {
-
             // 击破光效
             VFXManager.Instance.CreateVFX(1, transform.position);
 
@@ -292,28 +303,27 @@ public class EnemyController : CharacterController
         }
         else
         {
-
             // 收取符卡音效
             SFXManager.Instance.CreateSFX(1);
 
             // 继续下一张符卡
             animator.SetTrigger("GuardBreak");
 
-
-            StartCoroutine(WaitForSeconds(spellInterval, () =>
-            {
-                StartDanmaku();
-            }));
-
+            StartCoroutine(
+                WaitForSeconds(
+                    spellInterval,
+                    () =>
+                    {
+                        StartDanmaku();
+                    }
+                )
+            );
         }
-
-        
     }
 
     private void InvokeBarrage(Barrage barrage, BarrageData barrageData)
     {
         var fireData = barrageData.fireData;
-
 
         // 计算每轮射击改变的参数
 
@@ -323,7 +333,6 @@ public class EnemyController : CharacterController
         var fireOffset = barrageData.fireOffset;
         if (fireOffset.type != OffsetType.None && fireOffset.cycle != 0)
         {
-
             var cycleIndex = barrage.counter % fireOffset.cycle;
             // 往复运动
             if (fireOffset.reciprocate)
@@ -347,8 +356,6 @@ public class EnemyController : CharacterController
             // fireData.startAngle += deltaStartAngle;
         }
 
-
-
         switch (fireData.type)
         {
             case FireType.Round:
@@ -361,13 +368,10 @@ public class EnemyController : CharacterController
             case FireType.Spray:
                 StartCoroutine(FireSpray(barrage, fireData, deltaStartAngle));
                 break;
-
         }
-
 
         barrage.firing = true;
         barrage.counter += 1;
-
     }
 
     // private IEnumerator WaitForSeconds(float duration, System.Action action){
@@ -377,12 +381,14 @@ public class EnemyController : CharacterController
 
     private void MoveTo(Vector3 target, float duration, float startDelay)
     {
-
-        if (transform.position == target) return;
+        if (transform.position == target)
+            return;
 
         var horizont = 0;
-        if (target.x < transform.position.x) horizont = -1;
-        else if (target.x > transform.position.x) horizont = 1;
+        if (target.x < transform.position.x)
+            horizont = -1;
+        else if (target.x > transform.position.x)
+            horizont = 1;
 
         var tween = transform.DOMove(target, duration);
         tween.OnPlay(() =>
@@ -399,7 +405,6 @@ public class EnemyController : CharacterController
         seq.Append(transform.DOMove(target, duration));
 
         seq.Play();
-
     }
 
     public Vector3 GetPlayerPosition()
@@ -409,7 +414,6 @@ public class EnemyController : CharacterController
 
     private IEnumerator ShowMagicCircle(float duration, float maxSize)
     {
-
         magicCircle.localScale = new Vector3(0, 0, 0);
         magicCircle.gameObject.SetActive(true);
         float size = 0f;
@@ -422,9 +426,7 @@ public class EnemyController : CharacterController
             magicCircle.localScale = Vector3.one * size;
 
             yield return new WaitForFixedUpdate();
-
         }
-
 
         yield return null;
     }
@@ -437,19 +439,21 @@ public class EnemyController : CharacterController
 
     public void Hit()
     {
-        if (danmakuList[danmakuIndex].type == DanmakuType.SurvivalCard) return;
+        if (danmakuList[danmakuIndex].type == DanmakuType.SurvivalCard)
+            return;
 
         // 击中音效
         SFXManager.Instance.CreateSFX(0, 0.1f);
 
         spellLife -= 1;
-        if (spellLife < 0) spellLife = 0;
+        if (spellLife < 0)
+            spellLife = 0;
     }
 
     private bool hitByBomb = false;
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-
         // 判定被玩家的弹幕击中
         var shot = other.GetComponent<Shot>();
 
@@ -460,7 +464,6 @@ public class EnemyController : CharacterController
                 shot.TouchCharacter();
                 Hit();
             }
-
         }
 
         // 判定被玩家的Bomb击中
@@ -471,11 +474,12 @@ public class EnemyController : CharacterController
         // }
     }
 
-    private void OnTriggerStay2D(Collider2D other){
-
+    private void OnTriggerStay2D(Collider2D other)
+    {
         // 判定被玩家的Bomb击中
         var eraser = other.GetComponent<ShotEraser>();
-        if(eraser != null && eraser.erasing && eraser.playerBomb){
+        if (eraser != null && eraser.erasing && eraser.playerBomb)
+        {
             Hit();
         }
     }
@@ -489,29 +493,42 @@ public class EnemyController : CharacterController
     //     }
     // }
 
-
-    public void StartDelayOperation(List<DelayOperation> operations, List<Shot> shots){
-        foreach(var operation in operations){
-            StartCoroutine(WaitForSeconds(operation.delay, ()=>{
-                InvokeShotOperation(operation, shots);
-            }));
+    public void StartDelayOperation(List<DelayOperation> operations, List<Shot> shots)
+    {
+        foreach (var operation in operations)
+        {
+            StartCoroutine(
+                WaitForSeconds(
+                    operation.delay,
+                    () =>
+                    {
+                        InvokeShotOperation(operation, shots);
+                    }
+                )
+            );
         }
     }
 
-    private void InvokeShotOperation(DelayOperation operation, List<Shot> shots){
+    private void InvokeShotOperation(DelayOperation operation, List<Shot> shots)
+    {
+        foreach (var shot in shots)
+        {
+            if (shot == null || !shot.isActiveAndEnabled)
+                continue;
 
-        foreach(var shot in shots){
-            if(shot == null || !shot.isActiveAndEnabled) continue;
-
-            switch(operation.type){
+            switch (operation.type)
+            {
                 case ShotOperationType.ChangeDirectionAndSpeed:
                     // 方向
-                    switch(operation.directionType){
+                    switch (operation.directionType)
+                    {
                         case DirectionType.Fixed:
                             shot.startDirection = operation.direction;
                             break;
                         case DirectionType.Aimed:
-                            shot.startDirection = (player.transform.position - shot.transform.position).normalized;
+                            shot.startDirection = (
+                                player.transform.position - shot.transform.position
+                            ).normalized;
                             break;
                         case DirectionType.Random:
                             shot.startDirection = Utils.GetRandomDirection();
@@ -527,16 +544,13 @@ public class EnemyController : CharacterController
                     break;
             }
         }
-        
     }
-
 
     // *********************************************************************************************
 
     #region 弹幕实现
 
 
-    
     private IEnumerator FireRound(Barrage barrage, FireData data, float deltaStartAngle)
     {
         var group = data.group;
@@ -563,7 +577,6 @@ public class EnemyController : CharacterController
             case DirectionType.Random:
                 startDir = Utils.GetRandomDirection();
                 break;
-
         }
         startDir = startDir.normalized;
         // var startDir = data.aimed ? player.transform.position - transform.position : data.startDir;
@@ -574,7 +587,6 @@ public class EnemyController : CharacterController
 
         for (int i = 0; i < group.num; i++)
         {
-
             while (timer < interval)
             {
                 timer += Time.deltaTime;
@@ -591,22 +603,20 @@ public class EnemyController : CharacterController
             dist += group.deltaDistance;
             posDir = Quaternion.AngleAxis(group.posDeltaAngle, Vector3.forward) * posDir;
             posDistance += group.posDeltaDistance;
-
         }
         barrage.firing = false;
-
 
         // if (data.shotOperationDelay > 0 && data.shotOperation != null)
         // {
         //     yield return new WaitForSeconds(data.shotOperationDelay);
         //     data.shotOperation(shotList);
         // }
-        if(data.delayOperations.Count > 0){
+        if (data.delayOperations.Count > 0)
+        {
             StartDelayOperation(data.delayOperations, shotList);
         }
 
         yield return null;
-
     }
 
     private IEnumerator FireSector(Barrage barrage, FireData data, float deltaStartAngle)
@@ -632,7 +642,6 @@ public class EnemyController : CharacterController
 
         for (int i = 0; i < group.num; i++)
         {
-
             while (timer < interval)
             {
                 timer += Time.deltaTime;
@@ -652,10 +661,11 @@ public class EnemyController : CharacterController
                 case DirectionType.Random:
                     startDir = Utils.GetRandomDirection();
                     break;
-
             }
             startDir = startDir.normalized;
-            shotList.AddRange(barrage.FireSector(startDir, angle, count, sectorAngle, dist, deltaPos));
+            shotList.AddRange(
+                barrage.FireSector(startDir, angle, count, sectorAngle, dist, deltaPos)
+            );
             timer = 0;
 
             // 组内改变的参数
@@ -663,24 +673,24 @@ public class EnemyController : CharacterController
             dist += group.deltaDistance;
             posDir = Quaternion.AngleAxis(group.posDeltaAngle, Vector3.forward) * posDir;
             posDistance += group.posDeltaDistance;
-
         }
         barrage.firing = false;
-
 
         // if (data.shotOperationDelay > 0 && data.shotOperation != null)
         // {
         //     yield return new WaitForSeconds(data.shotOperationDelay);
         //     data.shotOperation(shotList);
         // }
-        if(data.delayOperations.Count > 0){
+        if (data.delayOperations.Count > 0)
+        {
             StartDelayOperation(data.delayOperations, shotList);
         }
 
         yield return null;
     }
 
-    private IEnumerator FireSpray(Barrage barrage, FireData data, float deltaStartAngle){
+    private IEnumerator FireSpray(Barrage barrage, FireData data, float deltaStartAngle)
+    {
         var group = data.group;
 
         // 组内射击间隔计时
@@ -705,7 +715,6 @@ public class EnemyController : CharacterController
             case DirectionType.Random:
                 startDir = Utils.GetRandomDirection();
                 break;
-
         }
         startDir = startDir.normalized;
         // var startDir = data.aimed ? player.transform.position - transform.position : data.startDir;
@@ -716,7 +725,6 @@ public class EnemyController : CharacterController
 
         for (int i = 0; i < group.num; i++)
         {
-
             while (timer < interval)
             {
                 timer += Time.deltaTime;
@@ -725,7 +733,16 @@ public class EnemyController : CharacterController
 
             var deltaPos = posDir * posDistance;
 
-            shotList.AddRange(barrage.FireSpray(startDir, angle, data.spray.fire, data.spray.angle, dist, deltaPos));
+            shotList.AddRange(
+                barrage.FireSpray(
+                    startDir,
+                    angle,
+                    data.spray.fire,
+                    data.spray.angle,
+                    dist,
+                    deltaPos
+                )
+            );
             timer = 0;
 
             // 组内改变的参数
@@ -733,25 +750,21 @@ public class EnemyController : CharacterController
             dist += group.deltaDistance;
             posDir = Quaternion.AngleAxis(group.posDeltaAngle, Vector3.forward) * posDir;
             posDistance += group.posDeltaDistance;
-
         }
         barrage.firing = false;
-
 
         // if (data.shotOperationDelay > 0 && data.shotOperation != null)
         // {
         //     yield return new WaitForSeconds(data.shotOperationDelay);
         //     data.shotOperation(shotList);
         // }
-        if(data.delayOperations.Count > 0){
+        if (data.delayOperations.Count > 0)
+        {
             StartDelayOperation(data.delayOperations, shotList);
         }
 
         yield return null;
     }
 
-
-
     #endregion
-
 }

@@ -1,17 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Ggross.Pattern;
 using Danmaku.Data;
+using Ggross.Pattern;
+using UnityEngine;
 
 public class ShotManager : SingletonMonoBehaviour<ShotManager>
 {
-    [SerializeField] private Shot[] shotPrefabs;
+    [SerializeField]
+    private Shot[] shotPrefabs;
     private List<ShotPool> poolList;
 
-    private void Awake() {
+    private void Awake()
+    {
         poolList = new List<ShotPool>();
-        foreach(var prefab in shotPrefabs){
+        foreach (var prefab in shotPrefabs)
+        {
             var poolObj = new GameObject($"Pool {prefab.name}");
             poolObj.transform.parent = transform;
             poolObj.transform.position = Vector3.zero;
@@ -35,7 +38,8 @@ public class ShotManager : SingletonMonoBehaviour<ShotManager>
     //     return shot;
     // }
 
-    public Shot CreateShot(ShotData data, Vector3 pos, Vector3 dir, bool enemy){
+    public Shot CreateShot(ShotData data, Vector3 pos, Vector3 dir, bool enemy)
+    {
         var index = data.prefabIndex;
         var shot = poolList[index].Get();
 
@@ -45,9 +49,4 @@ public class ShotManager : SingletonMonoBehaviour<ShotManager>
 
         // return CreateShot(data.prefabIndex, pos, dir, data.baseSpeed, enemy);
     }
-
-
-
 }
-
-

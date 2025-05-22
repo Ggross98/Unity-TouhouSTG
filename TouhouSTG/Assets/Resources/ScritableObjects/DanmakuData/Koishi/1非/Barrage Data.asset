@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed763e801d03dca48b42bb347ee1c337, type: 3}
   m_Name: Barrage Data
   m_EditorClassIdentifier: 
-  shotData: {fileID: 11400000, guid: 6d19967c09f50d34ab9a35a4fc62f8e4, type: 2}
+  shotData: {fileID: 11400000, guid: b49dd17bbe6643340a9ab2eb43867708, type: 2}
   startDelay: 0.5
   interval: 2.5
   fireData: {fileID: 11400000, guid: ed589f9412230284382dd7d023745842, type: 2}

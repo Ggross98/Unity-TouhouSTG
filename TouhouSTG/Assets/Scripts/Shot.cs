@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Danmaku.Data;
+using UnityEngine;
 
-public class Shot : MonoBehaviour {
-
+public class Shot : MonoBehaviour
+{
     // [SerializeField] private SpriteRenderer shotRenderer;
-   
+
     // public ShotData data;
 
     public int damage = 1;
@@ -16,13 +16,17 @@ public class Shot : MonoBehaviour {
 
     public bool enemyShot = false;
 
-    
     private float speed;
-    private float baseSpeed, minSpeed, maxSpeed, deltaSpeed;
+    private float baseSpeed,
+        minSpeed,
+        maxSpeed,
+        deltaSpeed;
 
     private float angle;
-    private float baseAngle, minAngle, maxAngle, deltaAngle;
-
+    private float baseAngle,
+        minAngle,
+        maxAngle,
+        deltaAngle;
 
     private float suspendTime = 0;
 
@@ -35,20 +39,21 @@ public class Shot : MonoBehaviour {
 
     // private bool isStraightMove=true, isCircularMove=false;
     // private bool isBallModePlay=false;
-    
+
     public MoveMode moveMode = MoveMode.Straight;
     public WallCheckMode wallCheckMode = WallCheckMode.Clear;
-    
 
     private bool moving = false;
 
     private System.Action<Shot> deactiveAction;
 
-    public void SetDeactiveAction(System.Action<Shot> action){
+    public void SetDeactiveAction(System.Action<Shot> action)
+    {
         this.deactiveAction = action;
     }
 
-    public void SetSpeed(LimitedValue v, float delta){
+    public void SetSpeed(LimitedValue v, float delta)
+    {
         baseSpeed = v.value;
         minSpeed = v.min;
         maxSpeed = v.max;
@@ -57,7 +62,8 @@ public class Shot : MonoBehaviour {
         speed = baseSpeed;
     }
 
-    public void SetAngle(LimitedValue v, float delta){
+    public void SetAngle(LimitedValue v, float delta)
+    {
         baseAngle = v.value;
         minAngle = v.min;
         maxAngle = v.max;
@@ -66,13 +72,16 @@ public class Shot : MonoBehaviour {
         angle = baseAngle;
     }
 
-    public void LoadData(ShotData sd){
-        if(sd.lifetime > 5) lifetime = sd.lifetime;
+    public void LoadData(ShotData sd)
+    {
+        if (sd.lifetime > 5)
+            lifetime = sd.lifetime;
         SetSpeed(sd.speed, sd.deltaSpeed);
         SetAngle(sd.angle, sd.deltaAngle);
     }
 
-    private void Init(Vector3 pos, Vector3 dir, bool enemy){
+    private void Init(Vector3 pos, Vector3 dir, bool enemy)
+    {
         // 位置
         transform.position = pos;
 
@@ -88,16 +97,16 @@ public class Shot : MonoBehaviour {
         this.enemyShot = enemy;
 
         StartMove(dir);
-
     }
 
-    public void Init(Vector3 pos, Vector3 dir, bool enemy, ShotData sd){
+    public void Init(Vector3 pos, Vector3 dir, bool enemy, ShotData sd)
+    {
         LoadData(sd);
         Init(pos, dir, enemy);
     }
 
-    public void StartMove(Vector3 dir){
-
+    public void StartMove(Vector3 dir)
+    {
         // moveMode = MoveMode.Straight;
         // this.direction = dir;
 
@@ -105,13 +114,15 @@ public class Shot : MonoBehaviour {
         moving = true;
     }
 
-    public void Kill(){
+    public void Kill()
+    {
         leftLifetime = 0f;
     }
 
     public void TouchWall()
     {
-        switch(wallCheckMode){
+        switch (wallCheckMode)
+        {
             case WallCheckMode.Clear:
                 leftLifetime = 0f;
                 break;
@@ -124,16 +135,22 @@ public class Shot : MonoBehaviour {
         VFXManager.Instance.CreateVFX(0, transform.position);
     }
 
-    public void ChangeSpeed(float delta){
+    public void ChangeSpeed(float delta)
+    {
         speed += delta;
-        if(speed < minSpeed) speed = minSpeed;
-        if(speed > maxSpeed) speed = maxSpeed;
+        if (speed < minSpeed)
+            speed = minSpeed;
+        if (speed > maxSpeed)
+            speed = maxSpeed;
     }
 
-    public void ChangeAngle(float delta){
+    public void ChangeAngle(float delta)
+    {
         angle += delta;
-        if(angle < minAngle) angle = minAngle;
-        if(angle > maxAngle) angle = maxAngle;
+        if (angle < minAngle)
+            angle = minAngle;
+        if (angle > maxAngle)
+            angle = maxAngle;
 
         Quaternion offset = Quaternion.AngleAxis(angle, Vector3.forward);
         direction = offset * startDirection;
@@ -141,21 +158,21 @@ public class Shot : MonoBehaviour {
 
     void FixedUpdate()
     {
-        if(!moving) return;
+        if (!moving)
+            return;
 
-        if(suspendTime > 0){
+        if (suspendTime > 0)
+        {
             suspendTime -= Time.deltaTime;
             return;
         }
 
-
-        
-        switch(moveMode){
+        switch (moveMode)
+        {
             case MoveMode.Straight:
 
                 ChangeSpeed(deltaSpeed * Time.deltaTime);
                 ChangeAngle(deltaAngle * Time.deltaTime);
-                
 
                 transform.position += direction * speed * Time.deltaTime;
                 break;
@@ -171,9 +188,9 @@ public class Shot : MonoBehaviour {
         //     {
         //         suspendTime -= Time.deltaTime;
         //     }
-           
+
         // }
-        
+
         // if(!isBouncing && outOfScreen )
         // {
         //     Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
@@ -184,20 +201,20 @@ public class Shot : MonoBehaviour {
         // }
 
         leftLifetime -= Time.deltaTime;
-        if(leftLifetime <= 0)
+        if (leftLifetime <= 0)
         {
             // gameObject.SetActive(false);
             deactiveAction.Invoke(this);
         }
-       
 
         //改变朝向
         Toward();
     }
 
-    private void Toward(){
+    private void Toward()
+    {
         float eulerAngle = 0;
-        if (direction.x> 0)
+        if (direction.x > 0)
         {
             eulerAngle = -Vector3.Angle(Vector3.up, direction.normalized);
         }
@@ -213,7 +230,6 @@ public class Shot : MonoBehaviour {
     {
         StartCoroutine(AutoRecycle());
     }*/
-
 
     private void Reset()
     {
